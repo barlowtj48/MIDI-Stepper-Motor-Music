@@ -42,8 +42,17 @@ def stop_note(motor):
 # Available MIDI ports
 print(mido.get_input_names())  # List all available input ports
 
+# Find the port that has "loopMIDI" in its name
+foundPort = [name for name in mido.get_input_names() if 'loopMIDI' in name]
+if len(foundPort) == 0:
+    print("No loopMIDI port found. Please create one and try again.")
+    exit(1)
+else:  # Use the first port that has "loopMIDI" in its name
+    foundPort = foundPort[0]
+
+
 # Open the MIDI input port (replace 'MIDI keyboard' with the actual name or use a port number)
-inport = mido.open_input(name="loopMIDI Port 2")
+inport = mido.open_input(name=foundPort)
 
 print("Listening for MIDI input...")
 
