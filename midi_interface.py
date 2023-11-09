@@ -4,7 +4,7 @@ import time
 
 # Constants for the MIDI to frequency conversion
 A4_KEY = 69
-A4_FREQ = 440
+A4_FREQ = 432
 
 # Replace with your Arduino's serial port and the correct baud rate
 arduino_port = 'COM6'  # This is typical for Unix
@@ -13,7 +13,10 @@ baud_rate = 115200
 # Open serial connection to Arduino
 ser = serial.Serial(arduino_port, baud_rate, timeout=1)
 time.sleep(3)  # wait for serial connection to initialize
-channel_outputting = [False, False]
+channel_outputting = [False, False, False, False]
+
+last_midi_activity_time = time.time()
+motors_enabled = True
 
 
 def note_to_frequency(note):
@@ -23,20 +26,53 @@ def note_to_frequency(note):
 
 
 def send_frequency_to_arduino(motor, freq):
+    global last_midi_activity_time, motors_enabled
+    last_midi_activity_time = time.time()
+    motors_enabled = True
+    if msg.channel > 3:
+        return
     if channel_outputting[msg.channel]:
         stop_note(msg.channel)
     """Send frequency data to the Arduino over serial."""
     data = f's,{motor},{freq}\n'.encode()
-    ser.write(data)
+    try:
+        ser.write(data)
+    except:
+        print("Serial write failed")
+        quit()
     channel_outputting[msg.channel] = True
 
 
 def stop_note(motor):
+    global last_midi_activity_time, motors_enabled
+    last_midi_activity_time = time.time()
+    motors_enabled = True
     """Send stop signal to Arduino over serial."""
+    if msg.channel > 3:
+        return
     if channel_outputting[motor]:
         data = f'e,{motor}\n'.encode()
-        ser.write(data)
+        try:
+            ser.write(data)
+        except:
+            print("Serial write failed")
+            quit()
         channel_outputting[motor] = False
+
+
+def disable_motors():
+    """Send stop signal to all motors."""
+    global motors_enabled
+    if not motors_enabled:
+        return
+    print("Disabling motors.")
+    motors_enabled = False
+    data = b'd\n'
+    try:
+        ser.write(data)
+    except:
+        print("Serial write failed")
+        quit()
 
 
 # Available MIDI ports
@@ -57,16 +93,22 @@ inport = mido.open_input(name=foundPort)
 print("Listening for MIDI input...")
 
 try:
-    for msg in inport:
-        if msg.channel > 3:
-            continue
-        if msg.type == 'note_on':
-            frequency = note_to_frequency(msg.note)
-            print(f'Note ON: {msg.note} -> Frequency: {frequency} Hz')
-            send_frequency_to_arduino(msg.channel, frequency)
-        elif msg.type == 'note_off':
-            print(f'Note OFF: {msg.note} -> Stop signal sent')
-            stop_note(msg.channel)
+    while True:
+        for msg in inport.iter_pending():
+            if msg.channel > 3:
+                continue
+            if msg.type == 'note_on':
+                frequency = note_to_frequency(msg.note)
+                print(f'Note ON: {msg.note} -> Frequency: {frequency} Hz')
+                send_frequency_to_arduino(msg.channel, frequency)
+            elif msg.type == 'note_off':
+                print(f'Note OFF: {msg.note} -> Stop signal sent')
+                stop_note(msg.channel)
+
+        # Check if it has been more than 5 seconds since the last MIDI activity
+        if time.time() - last_midi_activity_time > 5:
+            disable_motors()  # Disable motors after 5 seconds of inactivity
+
 
 finally:
     inport.close()
