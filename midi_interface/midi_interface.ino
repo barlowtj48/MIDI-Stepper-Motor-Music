@@ -14,26 +14,27 @@
 #define STEP_A_PIN 12
 #define DIR_A_PIN 13
 
-#define STEP_B_PIN 11
-#define DIR_B_PIN 10
+// 5th motor plugged into the Z+ and Y+ endstops because they are not used.
+// #define STEP_B_PIN 11
+// #define DIR_B_PIN 10
 
 // Create an AccelStepper object
 AccelStepper stepperA(AccelStepper::DRIVER, STEP_X_PIN, DIR_X_PIN);
 AccelStepper stepperB(AccelStepper::DRIVER, STEP_Z_PIN, DIR_Z_PIN);
 AccelStepper stepperC(AccelStepper::DRIVER, STEP_Y_PIN, DIR_Y_PIN);
 AccelStepper stepperD(AccelStepper::DRIVER, STEP_A_PIN, DIR_A_PIN);
-AccelStepper stepperE(AccelStepper::DRIVER, STEP_B_PIN, DIR_B_PIN);
+// AccelStepper stepperE(AccelStepper::DRIVER, STEP_B_PIN, DIR_B_PIN);
 
 // Create motors array
-AccelStepper motors[] = {stepperA, stepperB, stepperC, stepperD, stepperE};
+AccelStepper motors[] = {stepperA, stepperB, stepperC, stepperD /*, stepperE*/};
 // Make this dynamic in case motor array changes
 bool motorsRunning[sizeof(motors) / sizeof(motors[0])] = {false};
+bool motorNumberAcknowledged = false;
 
 void setup()
 {
   // Enable the motors
   pinMode(ENABLE_PIN, OUTPUT);
-  digitalWrite(ENABLE_PIN, LOW);
   Serial.begin(115200);
   for (unsigned int i = 0; i < sizeof(motors) / sizeof(motors[0]); i++)
   {
@@ -44,6 +45,26 @@ void setup()
 
 void loop()
 {
+  // Write out to serial the number of motors that are in use.
+  // This is used by the Python script to know how many MIDI channels to listen to
+  // Keep doing it until the python script acknowledges it
+  if (!motorNumberAcknowledged)
+  {
+    Serial.println("motors: " + String(sizeof(motors) / sizeof(motors[0])));
+    if (Serial.available() > 0)
+    {
+      String command = Serial.readStringUntil('\n');
+      command.trim(); // Remove any whitespace
+      command.toLowerCase();
+      if (command == "ack")
+      {
+        motorNumberAcknowledged = true;
+      }
+    }
+    // Sleep for 200ms to avoid spamming the serial port
+    delay(200);
+    return;
+  }
   if (Serial.available() > 0)
   {
     String command = Serial.readStringUntil('\n');
