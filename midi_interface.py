@@ -11,9 +11,13 @@ arduino_port = 'COM6'  # This is typical for Unix
 baud_rate = 115200
 
 # Open serial connection to Arduino
-ser = serial.Serial(arduino_port, baud_rate, timeout=1)
+try:
+    ser = serial.Serial(arduino_port, baud_rate, timeout=1)
+except:
+    print("Serial connection failed. Please check your port and baud rate and try again.")
+    quit()
 time.sleep(3)  # wait for serial connection to initialize
-channel_outputting = [False, False, False, False]
+channel_outputting = [False, False, False, False, False]
 
 last_midi_activity_time = time.time()
 motors_enabled = True
@@ -29,7 +33,7 @@ def send_frequency_to_arduino(motor, freq):
     global last_midi_activity_time, motors_enabled
     last_midi_activity_time = time.time()
     motors_enabled = True
-    if msg.channel > 3:
+    if msg.channel > len(channel_outputting) - 1:
         return
     if channel_outputting[msg.channel]:
         stop_note(msg.channel)
@@ -48,7 +52,7 @@ def stop_note(motor):
     last_midi_activity_time = time.time()
     motors_enabled = True
     """Send stop signal to Arduino over serial."""
-    if msg.channel > 3:
+    if msg.channel > len(channel_outputting) - 1:
         return
     if channel_outputting[motor]:
         data = f'e,{motor}\n'.encode()
@@ -65,6 +69,9 @@ def disable_motors():
     global motors_enabled
     if not motors_enabled:
         return
+    # if any of the channels are outputting, just return
+    if any(channel_outputting):
+        return
     print("Disabling motors.")
     motors_enabled = False
     data = b'd\n'
@@ -76,7 +83,7 @@ def disable_motors():
 
 
 # Available MIDI ports
-print(mido.get_input_names())  # List all available input ports
+print(mido.get_input_names())
 
 # Find the port that has "loopMIDI" in its name
 foundPort = [name for name in mido.get_input_names() if 'loopMIDI' in name]
@@ -95,7 +102,7 @@ print("Listening for MIDI input...")
 try:
     while True:
         for msg in inport.iter_pending():
-            if msg.channel > 3:
+            if msg.channel > len(channel_outputting) - 1:
                 continue
             if msg.type == 'note_on':
                 frequency = note_to_frequency(msg.note)

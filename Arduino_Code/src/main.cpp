@@ -14,14 +14,18 @@
 #define STEP_A_PIN 12
 #define DIR_A_PIN 13
 
+#define STEP_B_PIN 11
+#define DIR_B_PIN 10
+
 // Create an AccelStepper object
 AccelStepper stepperA(AccelStepper::DRIVER, STEP_X_PIN, DIR_X_PIN);
 AccelStepper stepperB(AccelStepper::DRIVER, STEP_Z_PIN, DIR_Z_PIN);
 AccelStepper stepperC(AccelStepper::DRIVER, STEP_Y_PIN, DIR_Y_PIN);
 AccelStepper stepperD(AccelStepper::DRIVER, STEP_A_PIN, DIR_A_PIN);
+AccelStepper stepperE(AccelStepper::DRIVER, STEP_B_PIN, DIR_B_PIN);
 
 // Create motors array
-AccelStepper motors[] = {stepperA, stepperB, stepperC, stepperD};
+AccelStepper motors[] = {stepperA, stepperB, stepperC, stepperD, stepperE};
 // Make this dynamic in case motor array changes
 bool motorsRunning[sizeof(motors) / sizeof(motors[0])] = {false};
 
