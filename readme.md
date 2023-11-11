@@ -8,8 +8,6 @@ The goal of this project is to be able to import any MIDI file in to the softwar
 
 Please read the entire tutorial before starting this project. You should also have a basic understanding of MIDI files and how they work. If you do not, I would recommend watching [this YouTube video](https://youtu.be/faZIkN_e_1s) before continuing.
 
-<iframe width="1280" height="720" src="https://www.youtube.com/embed/faZIkN_e_1s" title="MIDI Explained for Beginners" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
 This project requires some advanced understanding of electronics. You should be familiar with the Arduino board and how to upload sketches to it. You should also be familiar with basic Python programming and how to install Python libraries. The most complex thing will be troubleshooting motor issues (this is explained further in the troubleshooting section).
 Do consider you may encounter problems that require you to search for solutions online. This project costs roughly $60-$70 to complete if you have none of the parts. You can find the parts list below.
 This tutorial is for 4 motors but you can use as many as your microcontroller (the Arduino Duo in this case) supports. Each extra motor requires a minimum of 2 digitalOutput pins on the Arduino.
@@ -26,6 +24,8 @@ I have noted individual parts of the instructions that may be difficult to under
 - [Driver modules for stepper motors (A4988 are good because they are loud)](https://amzn.to/3QQbbvP) You do not need this if you buy the CNC shield above, they are included with that.
 - Paperclip or an electrical test lead - This is used to test the polarity of the motors
 - [12V Power Supply](https://amzn.to/3SDBPJQ)
+- Wires to plug the 12V power supply into the CNC shield. I am using 20 gauge wire but you can use whatever you have on hand.
+- Wire to plug the power supply into the wall. If you are handy you can make one by cutting the end off of an old power supply and stripping the wires. If you are not, you can buy one [here](https://amzn.to/3swftz7).
 
 ## Software Requirements
 
@@ -36,6 +36,12 @@ I have noted individual parts of the instructions that may be difficult to under
 
 ## Setup and Installation
 
+### LoopMIDI Setup
+
+1. Install loopMIDI from the link above.
+2. Open loopMIDI and click the + button to add a new port. Don't change the name, the python script is depending on it to contain the word "loopMIDI".
+3. That is all for that. This program must be running for the python script to work.
+
 ### Arduino Setup
 
 1. Install the Arduino IDE from the link above.
@@ -43,7 +49,7 @@ I have noted individual parts of the instructions that may be difficult to under
 3. Open the Arduino IDE and select the correct board and port from the Tools menu.
    It should look something like this:
 
-<img src="tutorial_images/Arduino_IDE.png">
+<img src="tutorial_images/Arduino_IDE.png" style="height: 700px">
 
 4. You do not need to plug anything in to the Arduino yet. We will do that later.
 5. You can test the Arduino by uploading the Blink sketch from the Examples menu. This will blink the onboard LED on the Arduino. If this works, you are ready to move on to the next step.
@@ -54,36 +60,59 @@ I have noted individual parts of the instructions that may be difficult to under
 
 ## Hardware Assembly
 
-1. **Connecting Stepper Motors to Driver Modules**: Diagram and explanation.
-2. **Wiring Motors to Arduino**: Step-by-step guide with diagrams.
-3. **Power Supply Connections**: Safety and connection tips.
+### <span style="color:red">**Important Note**</span>
+
+The motors may have incorrect wiring when you purchase them. They may be wired in a way that is incompatible with the A4988 Stepper Drivers.
+<span style="color:red"><u>BEFORE YOU PLUG ANYTHING INTO THE CNC SHIELD, CHECK THE POLARITY OF THE MOTORS.</u></span>
+
+Before plugging in the test lead or paperclip into the motor, spin the motor shaft to get a feel for the resistance.
+Next, insert paperclip or test lead into two pins on the stepper motor. Refer to this picture for the test lead method:
+
+<img src="tutorial_images/Polarity_Test.jpg" style="height: 700px">
+
+If the motors are wired **correctly**, the first 2 (or last two) pins will make the motor harder to spin with your hand. It is imperative that the pins that cause resistance are next to each other or the motor will not work when plugged in. The paired pins should be in the order A, A, B, B. It doesn't matter which A or B pin is which, as long as they are next to each other.
+
+After that: watch this video for setting up the CNC shield and stepper drivers: [Link to video](https://youtu.be/rgAe1eVj9fw)
 
 ## Software Configuration
 
 ### Arduino Programming
 
-1. **Loading the Stepper Motor Control Sketch**: Instructions to load and explain the code.
-2. **Basic Motor Movement Test**: Test to ensure motors respond correctly.
+1. Open the sketch in the Arduino IDE.
+2. It requires the AccelStepper library. You can install this from the Arduino IDE by going to Sketch > Include Library > Manage Libraries. Search for AccelStepper and install the library by Mike McCauley.
+3. Ensure that the correct board and port are selected in the Tools menu.
+4. Upload the sketch to the Arduino.
 
 ### Python Scripting
 
-1. **Python MIDI Script Overview**: Explain the purpose and functionality of your Python script.
-2. **Running the Script**: Instructions on how to execute the Python script.
+1. Open the command prompt in the the downloaded directory
+2. Run the command `pip install -r requirements.txt` to install the required libraries.
+3. In the command prompt run the command `python midi_interface.py` to run the script.
 
 ## Final Testing and Troubleshooting
 
-- Guide on how to test the entire setup.
-- Common issues and troubleshooting tips.
+- Ensure any time you plug or unplug anything from the Arduino that it is unplugged from the computer, and the power supply is unplugged from the wall.
+- Do not skip the step about the motor polarity. If you do, you may damage the stepper drivers.
+- Ensure that the MIDI Output from whatever software you are using is set to Port 1. The python script is only setup to listen to port 1.
+- If the motors make an unusual buzzing noise when a certain note or frequency range is played, it is likely they have too much or too little power. On the A4988 drivers, there is a small screw potentiometer that can be turned to adjust the power limiter. Turn it clockwise to increase the power, and counter-clockwise to decrease the power. This will require some trial and error to get right.
 
 ## Usage and Examples
 
-- Detailed examples of how to use the system.
-- Ideas for projects or experiments.
+- Each motor is set to a specific MIDI channel. The first motor is set to channel 1, the second to channel 2, and so on. This means that if you want to play a note on the first motor, you must set the MIDI channel to 1. If you want to play a note on the second motor, you must set the MIDI channel to 2. This is how the python script knows which motor to move.
+- MIDI notes that are output to each channel must not overlap. The motors are only able to spin one frequency at a time and ignoring this will create very unusual sounds or interrupt notes during their sustain phase.
+- The motors are limited by how fast they can accelerate, so if you do a very rapid arpeggio then the motor power limit may need to be turned up to allow this.
+- Placing the motors on a large flat surface will help them to be louder. The more surface area the sound has to resonate, the louder it will be. That's why I used a large USPS shipping box in the TikTok videos.
 
 ## Conclusion
 
-Summarize what the user should have achieved and suggest further experiments or modifications.
+Assuming you are able to get everything working. You better darn post a video of it. I want to see what you make with this.
+
+Direct any questions that you have to the issues tab on this repository. I will try to answer them as soon as I can, and update this tutorial to reflect any changes that need to be made.
 
 ## Additional Resources
 
-- Links to helpful resources, forums, or further reading.
+- [GreatScott! - Electronic Basics #24: Stepper Motors and how to use them](https://youtu.be/bkqoKWP4Oy4)
+
+## Advanced Extras
+
+If you have a good understanding of electronics and you have a breadboard and all of the components, then it really is just a limit of how much you want to spend on the motors and drivers. I believe that you can just hold the direction pins on the stepper drivers in either direction (because the direction doesn't matter) and effectively use 1 pin per output if wiring manually. This would enable the Arduino Uno (or whatever microcontroller) to use pretty much as many motors as it has pins. I have not tested this but I believe it would work. If you try this, please let me know how it goes. The efforts in making the MIDI music would be considerably higher though, because 15 motors would require 15 separate channels to be aligned and that would take a while.
