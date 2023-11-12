@@ -91,6 +91,8 @@ After that: watch this video for setting up the CNC shield and stepper drivers: 
 - Do not skip the step about the motor polarity. If you do, you may damage the stepper drivers.
 - Ensure that the MIDI Output from whatever software you are using is set to Port 1. The python script is only setup to listen to port 1.
 - If the motors make an unusual buzzing noise when a certain note or frequency range is played, it is likely they have too much or too little power. On the A4988 drivers, there is a small screw potentiometer that can be turned to adjust the power limiter. Turn it clockwise to increase the power, and counter-clockwise to decrease the power. This will require some trial and error to get right.
+- If you are having issues with writing code to the Arduino, ensure that the python script is not running. The Arduino cannot be written to while the serial port is in use.
+- If you are having issues with the python script not being able to connect when the Arduino is plugged in, ensure that the "Serial Monitor" is not open in the Arduino IDE. The serial monitor uses the same serial port as the python script and will prevent it from connecting.
 
 ## Usage and Examples
 

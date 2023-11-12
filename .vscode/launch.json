@@ -12,7 +12,7 @@
       "console": "integratedTerminal",
       "justMyCode": true,
       "args": [
-        "COM3" // Change this to the COM port of your Arduino device
+        "COM6" // Change this to the COM port of your Arduino device
       ]
     }
   ]
