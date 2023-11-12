@@ -1,16 +1,35 @@
-import mido
-import serial
+try:
+    import mido
+    import serial
+except:
+    print("Please install the required libraries using pip:")
+    print("pip install mido")
+    print("pip install pyserial")
+    quit()
+
+# These libraries are included with Python, you do not need to install them
 import time
 import re
+import sys
 
 # Constants for the MIDI to frequency conversion
 A4_KEY = 69
-A4_FREQ = 432
+# WOAH 440? Please express your preference with the variable below
+# https://emastered.com/blog/432-hz-tuning-standard
+A4_FREQ = 440
 
-# Replace with your Arduino's serial port and the correct baud rate
-# TODO: support command line arguments for port
-arduino_port = 'COM6'
+# The port that the Arduino is connected to
+# It is input using command line arguments
+# If you would like to debug this using VSCode, change the "args" value in .vscode/launch.json
+if len(sys.argv) > 1:
+    arduino_port = sys.argv[1]
+else:
+    print("Please specify the port that the Arduino is connected to.")
+    print("For example:\npython midi_interface.py COM3")
+    quit()
 
+# The baud rate is the speed of the serial connection
+# It must match the baud rate in the Arduino code
 baud_rate = 115200
 motor_channels = 0
 
@@ -18,11 +37,15 @@ motor_channels = 0
 try:
     ser = serial.Serial(arduino_port, baud_rate, timeout=1)
 except:
-    print("Serial connection failed. Please check your port and baud rate and try again.")
+    print("Serial connection failed. Please check your port and try again.")
     quit()
-time.sleep(3)  # wait for serial connection to initialize
+
+# Wait for Serial to initialize
+time.sleep(3)
+
 # Read from the serial to determine how many motors are connected
 start_time = time.time()
+# Wait for 5 seconds or until the we can set the number of motor channels
 while motor_channels == 0 and time.time() - start_time < 5:
     try:
         channels_str = str(ser.readline().decode())
@@ -33,7 +56,7 @@ while motor_channels == 0 and time.time() - start_time < 5:
             ser.write(b'ack\n')
             print(f"Script connected to Arduino with {motor_channels} motors.")
     except:
-        print("Serial read failed. Please check your port and baud rate and try again.")
+        print("Serial read failed. Please check your port and try again.")
         quit()
 
 # Keeps track of which channels are outputting

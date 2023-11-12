@@ -54,10 +54,6 @@ I have noted individual parts of the instructions that may be difficult to under
 4. You do not need to plug anything in to the Arduino yet. We will do that later.
 5. You can test the Arduino by uploading the Blink sketch from the Examples menu. This will blink the onboard LED on the Arduino. If this works, you are ready to move on to the next step.
 
-### Python Environment Setup
-
-1. Install Python from the link above.
-
 ## Hardware Assembly
 
 ### <span style="color:red">**Important Note**</span>

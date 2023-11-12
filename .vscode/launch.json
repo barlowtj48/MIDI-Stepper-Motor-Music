@@ -10,7 +10,10 @@
       "request": "launch",
       "program": "${workspaceFolder}/midi_interface.py",
       "console": "integratedTerminal",
-      "justMyCode": true
+      "justMyCode": true,
+      "args": [
+        "COM3" // Change this to the COM port of your Arduino device
+      ]
     }
   ]
 }
