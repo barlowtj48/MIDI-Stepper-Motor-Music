@@ -4,6 +4,8 @@
 
 The goal of this project is to be able to import any MIDI file in to the software of your choice, and output them to the Arduino and use the attached stepper motors to act as frequency generators for some cool music.
 
+In case you are unfamiliar with what this project is about, [Here is a TikTok playlist of it in action](https://www.tiktok.com/@bar_low/playlist/Motor%20Music-7299252254878583598)
+
 ## Prerequisites
 
 Please read the entire tutorial before starting this project. You should also have a basic understanding of MIDI files and how they work. If you do not, I would recommend watching [this YouTube video](https://youtu.be/faZIkN_e_1s) before continuing.
