@@ -85,7 +85,8 @@ After that: watch this video for setting up the CNC shield and stepper drivers: 
 
 1. Open the command prompt in the the downloaded directory
 2. Run the command `pip install -r requirements.txt` to install the required libraries.
-3. In the command prompt run the command `python midi_interface.py` to run the script.
+3. In the command prompt run the command `python midi_interface.py COM6` to run the script.
+4. Note that `COM6` will be specific to your computer, and you can see it in the Arduino IDE.
 
 ## Final Testing and Troubleshooting
 
