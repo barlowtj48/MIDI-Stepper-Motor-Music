@@ -81,6 +81,8 @@ Next, insert paperclip or test lead into two pins on the stepper motor. Refer to
 
 If the motors are wired **correctly**, the first 2 (or last two) pins will make the motor harder to spin with your hand. It is imperative that the pins that cause resistance are next to each other or the motor will not work when plugged in. The paired pins should be in the order A, A, B, B. It doesn't matter which A or B pin is which, as long as they are next to each other.
 
+**Make sure that if you are testing with only 1 motor, that it is plugged into the driver labeled "X" on the CNC Shield, otherwise the program will be outputting to a driver that is not yet there.**
+
 After that: watch this video for setting up the CNC shield and stepper drivers: [Link to video](https://youtu.be/rgAe1eVj9fw)
 
 ## Software Configuration
