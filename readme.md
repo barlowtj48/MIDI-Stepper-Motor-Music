@@ -35,8 +35,19 @@ I have noted individual parts of the instructions that may be difficult to under
 - MIDI Editor or DAW (I used FL Studio)
 - [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html)
 - [Python](https://www.python.org/downloads/) (Version doesn't matter too much, I used 3.11.3)
+- This GitHub Repo
 
 ## Setup and Installation
+
+### Running the python using files from this repository
+
+1. Click the Green "Code" button at the top right, and click `Download Zip` or [Click Here](https://github.com/barlowtj48/MIDI-Stepper-Motor-Music/archive/refs/heads/main.zip)
+2. Extract the downloaded folder to it's own folder
+     On Windows this means Right Click -> Extract All -> Check the box -> Extract
+3. Open the folder `MIDI-Stepper-Motor-Music-main` so that you are able to see the files like this:
+   <img src="tutorial_images/file_view.png" style="height: 700px">
+4. Click at the top (like the image says) and type in `cmd`
+5. This will open a command prompt in the downloaded folder. This is the correct location to run the python commands below.
 
 ### LoopMIDI Setup
 
