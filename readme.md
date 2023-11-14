@@ -46,8 +46,9 @@ I have noted individual parts of the instructions that may be difficult to under
      On Windows this means Right Click -> Extract All -> Check the box -> Extract
 3. Open the folder `MIDI-Stepper-Motor-Music-main` so that you are able to see the files like this:
    <img src="tutorial_images/file_view.png" style="height: 300px">
-4. Click at the top (like the image says) and type in `cmd`
-5. This will open a command prompt in the downloaded folder. This is the correct location to run the python commands below.
+4. Click at the top of the window (like the picture below) and type in `cmd`
+   <img src="tutorial_images/where_to_click_cmd.png" style="height:150px">
+6. This will open a command prompt in the downloaded folder. This is the correct location to run the python commands below.
 
 ### LoopMIDI Setup
 
@@ -80,6 +81,8 @@ Next, insert paperclip or test lead into two pins on the stepper motor. Refer to
 <img src="tutorial_images/Polarity_Test.jpg" style="height: 700px">
 
 If the motors are wired **correctly**, the first 2 (or last two) pins will make the motor harder to spin with your hand. It is imperative that the pins that cause resistance are next to each other or the motor will not work when plugged in. The paired pins should be in the order A, A, B, B. It doesn't matter which A or B pin is which, as long as they are next to each other.
+
+**Make sure that if you are testing with only 1 motor, that it is plugged into the driver labeled "X" on the CNC Shield, otherwise the program will be outputting to a driver that is not yet there.**
 
 After that: watch this video for setting up the CNC shield and stepper drivers: [Link to video](https://youtu.be/rgAe1eVj9fw)
 
