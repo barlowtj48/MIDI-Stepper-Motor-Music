@@ -46,8 +46,9 @@ I have noted individual parts of the instructions that may be difficult to under
      On Windows this means Right Click -> Extract All -> Check the box -> Extract
 3. Open the folder `MIDI-Stepper-Motor-Music-main` so that you are able to see the files like this:
    <img src="tutorial_images/file_view.png" style="height: 300px">
-4. Click at the top (like the image says) and type in `cmd`
-5. This will open a command prompt in the downloaded folder. This is the correct location to run the python commands below.
+4. Click at the top of the window (like the picture below) and type in `cmd`
+   <img src="tutorial_images/where_to_click_cmd.png" style="height:150px">
+6. This will open a command prompt in the downloaded folder. This is the correct location to run the python commands below.
 
 ### LoopMIDI Setup
 
