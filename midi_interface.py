@@ -5,6 +5,8 @@ except:
     print("Please install the required libraries using pip:")
     print("pip install mido")
     print("pip install pyserial")
+    # This seems to be some dependency of mido that is undocumented
+    print("pip install python-rtmidi")
     quit()
 
 # These libraries are included with Python, you do not need to install them
@@ -72,44 +74,44 @@ def note_to_frequency(note):
     return freq
 
 
-def send_frequency_to_arduino(motor, freq):
-    global last_midi_activity_time, motors_enabled
+def send_frequency_to_arduino(motor_index, freq):
+    global last_midi_activity_time, motors_enabled, channel_outputting
     last_midi_activity_time = time.time()
     motors_enabled = True
-    if msg.channel > motor_channels - 1:
+    if motor_index > motor_channels - 1:
         return
-    if channel_outputting[msg.channel]:
-        stop_note(msg.channel)
+    if channel_outputting[motor_index]:
+        stop_note(motor_index)
     """Send frequency data to the Arduino over serial."""
-    data = f's,{motor},{freq}\n'.encode()
+    data = f's,{motor_index},{freq}\n'.encode()
     try:
         ser.write(data)
     except:
         print("Serial Write Failure. Was the device unplugged?")
         quit()
-    channel_outputting[msg.channel] = True
+    channel_outputting[motor_index] = True
 
 
-def stop_note(motor):
-    global last_midi_activity_time, motors_enabled
+def stop_note(motor_index):
+    global last_midi_activity_time, motors_enabled, channel_outputting
     last_midi_activity_time = time.time()
     motors_enabled = True
     """Send stop signal to Arduino over serial."""
-    if msg.channel > motor_channels - 1:
+    if motor_index > motor_channels - 1:
         return
-    if channel_outputting[motor]:
-        data = f'e,{motor}\n'.encode()
+    if channel_outputting[motor_index]:
+        data = f'e,{motor_index}\n'.encode()
         try:
             ser.write(data)
         except:
             print("Serial Write Failure. Was the device unplugged?")
             quit()
-        channel_outputting[motor] = False
+        channel_outputting[motor_index] = False
 
 
 def disable_motors():
     """Send stop signal to all motors."""
-    global motors_enabled
+    global motors_enabled, channel_outputting
     if not motors_enabled:
         return
     # if any of the channels are outputting, just return
@@ -144,15 +146,16 @@ print("Listening for MIDI input...")
 try:
     while True:
         for msg in inport.iter_pending():
-            if msg.channel > motor_channels - 1:
+            motor_index = msg.channel
+            if motor_index > motor_channels - 1:
                 continue
             if msg.type == 'note_on':
                 frequency = note_to_frequency(msg.note)
                 print(f'Note ON: {msg.note} -> Frequency: {frequency} Hz')
-                send_frequency_to_arduino(msg.channel, frequency)
+                send_frequency_to_arduino(motor_index, frequency)
             elif msg.type == 'note_off':
                 print(f'Note OFF: {msg.note} -> Stop signal sent')
-                stop_note(msg.channel)
+                stop_note(motor_index)
 
         # Check if it has been more than 5 seconds since the last MIDI activity
         if time.time() - last_midi_activity_time > 5:
