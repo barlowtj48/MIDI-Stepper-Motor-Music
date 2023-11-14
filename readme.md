@@ -117,6 +117,8 @@ After that: watch this video for setting up the CNC shield and stepper drivers: 
 - MIDI notes that are output to each channel must not overlap. The motors are only able to spin one frequency at a time and ignoring this will create very unusual sounds or interrupt notes during their sustain phase.
 - The motors are limited by how fast they can accelerate, so if you do a very rapid arpeggio then the motor power limit may need to be turned up to allow this.
 - Placing the motors on a large flat surface will help them to be louder. The more surface area the sound has to resonate, the louder it will be. That's why I used a large USPS shipping box in the TikTok videos.
+- If you do not have software to test the MIDI output but you have everything else working, then [Try out this site](https://signal.vercel.app/edit) Shoutout to Jonny for finding this!
+  - Click on the settings and click on MIDI and check the box for the loopMIDI output and you will be outputting on port 1, channel 1. 
 
 ## Conclusion
 
