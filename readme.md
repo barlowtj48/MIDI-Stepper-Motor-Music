@@ -34,7 +34,7 @@ I have noted individual parts of the instructions that may be difficult to under
 - [Arduino IDE](https://www.arduino.cc/en/software)
 - MIDI Editor or DAW (I used FL Studio)
 - [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html)
-- [Python](https://www.python.org/downloads/) (Version doesn't matter too much, I used 3.11.3)
+- [Python](https://www.python.org/downloads/) (Version doesn't matter too much, I used 3.11.3) **Make sure you check the box "Add to Path"** <-- This will enable the command prompt to run python from wherever on your computer
 - This GitHub Repo
 
 ## Setup and Installation
