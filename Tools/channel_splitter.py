@@ -11,8 +11,7 @@ def split_notes_to_channels(midi_file, new_midi_file):
         new_track = mido.MidiTrack()
         new_mid.tracks.append(new_track)
 
-        # Track (note, time_since_last_event, total_time_elapsed) for each channel
-        active_notes = [None] * 16
+        active_notes = [None] * 16  # (note, end_time) for each channel
         time_elapsed = 0
 
         for msg in track:
@@ -22,7 +21,9 @@ def split_notes_to_channels(midi_file, new_midi_file):
                 channel = find_free_channel(active_notes, time_elapsed)
                 new_track.append(mido.Message(
                     'note_on', note=msg.note, velocity=msg.velocity, time=msg.time, channel=channel))
-                active_notes[channel] = (msg.note, msg.time, time_elapsed)
+                # Set end time for this note. Assuming a default duration for notes.
+                end_time = time_elapsed + 480  # Example duration, this may need adjustment
+                active_notes[channel] = (msg.note, end_time)
 
             elif msg.type == 'note_off' or (msg.type == 'note_on' and msg.velocity == 0):
                 channel = next((i for i, v in enumerate(
@@ -35,7 +36,6 @@ def split_notes_to_channels(midi_file, new_midi_file):
             else:
                 new_track.append(msg.copy())
 
-            # Adjust the time_elapsed for the next event
             if msg.type in ['note_on', 'note_off']:
                 time_elapsed = 0
 
@@ -44,11 +44,11 @@ def split_notes_to_channels(midi_file, new_midi_file):
 
 def find_free_channel(active_notes, current_time):
     for i, active_note in enumerate(active_notes):
-        if active_note is None or (active_note[2] + active_note[1] <= current_time):
+        if active_note is None or (active_note[1] <= current_time):
             return i
 
     # Use the channel with the earliest ending note
-    return min(enumerate(active_notes), key=lambda x: (x[1][2] + x[1][1] if x[1] else float('inf')))[0]
+    return min(enumerate(active_notes), key=lambda x: (x[1][1] if x[1] else float('inf')))[0]
 
 
 # Example usage code
