@@ -76,6 +76,24 @@ def note_to_frequency(note):
 
 def send_buffer_to_arduino(msg_buffer):
     """Send a buffer of MIDI messages to the Arduino over serial, all at once."""
+    global channel_outputting, motors_enabled, last_midi_activity_time
+    # Pretty print the buffer as columns of frequencies for each channel
+    print_str = ""
+    data_values = [0] * motor_channels
+    for msg in msg_buffer:
+        if msg['channel'] > motor_channels - 1:
+            continue
+        if msg['type'] == 'note_on':
+            val = f"{msg['freq']:.2f}"
+            if val == "0":
+                val = "0.00"
+            data_values[msg['channel']] = val
+        elif msg['type'] == 'note_off':
+            data_values[msg['channel']] = "0.00"
+    for value in data_values:
+        print_str += f"{value}\t"
+    print(print_str)
+
     serial_data = b''
     for msg in msg_buffer:
         if msg['channel'] > motor_channels - 1:
@@ -88,12 +106,15 @@ def send_buffer_to_arduino(msg_buffer):
             serial_data += f's,{msg["channel"]},{msg["freq"]}\n'.encode()
         else:
             if msg['type'] == 'note_on':
+                if not motors_enabled:
+                    motors_enabled = True
                 channel_outputting[msg['channel']] = True
                 serial_data += f's,{msg["channel"]},{msg["freq"]}\n'.encode()
             elif msg['type'] == 'note_off':
                 channel_outputting[msg['channel']] = False
                 serial_data += f'e,{msg["channel"]}\n'.encode()
     try:
+        last_midi_activity_time = time.time()
         ser.write(serial_data)
     except:
         print("Serial Write Failure. Was the device unplugged?")
@@ -145,12 +166,8 @@ try:
                 frequency = note_to_frequency(msg.note)
                 msg_buffer.append(
                     {'type': 'note_on', 'freq': frequency, 'channel': motor_index})
-                print(
-                    f'Motor {motor_index} ON - @{round(frequency, 2)} Hz')
             elif msg.type == 'note_off':
                 msg_buffer.append({'type': 'note_off', 'channel': motor_index})
-                print(
-                    f'Motor {motor_index} OFF')
         if len(msg_buffer) > 0:
             send_buffer_to_arduino(msg_buffer)
 
