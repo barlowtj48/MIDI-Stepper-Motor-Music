@@ -74,39 +74,30 @@ def note_to_frequency(note):
     return freq
 
 
-def send_frequency_to_arduino(motor_index, freq):
-    global last_midi_activity_time, motors_enabled, channel_outputting
-    last_midi_activity_time = time.time()
-    motors_enabled = True
-    if motor_index > motor_channels - 1:
-        return
-    if channel_outputting[motor_index]:
-        stop_note(motor_index)
-    """Send frequency data to the Arduino over serial."""
-    data = f's,{motor_index},{freq}\n'.encode()
+def send_buffer_to_arduino(msg_buffer):
+    """Send a buffer of MIDI messages to the Arduino over serial, all at once."""
+    serial_data = b''
+    for msg in msg_buffer:
+        if msg['channel'] > motor_channels - 1:
+            continue
+        # If the channel is already outputting, end the previous note
+        if channel_outputting[msg['channel']] and msg['type'] == 'note_on':
+            # end the previous note
+            serial_data += f'e,{msg["channel"]}\n'.encode()
+            # start the new note
+            serial_data += f's,{msg["channel"]},{msg["freq"]}\n'.encode()
+        else:
+            if msg['type'] == 'note_on':
+                channel_outputting[msg['channel']] = True
+                serial_data += f's,{msg["channel"]},{msg["freq"]}\n'.encode()
+            elif msg['type'] == 'note_off':
+                channel_outputting[msg['channel']] = False
+                serial_data += f'e,{msg["channel"]}\n'.encode()
     try:
-        ser.write(data)
+        ser.write(serial_data)
     except:
         print("Serial Write Failure. Was the device unplugged?")
         quit()
-    channel_outputting[motor_index] = True
-
-
-def stop_note(motor_index):
-    global last_midi_activity_time, motors_enabled, channel_outputting
-    last_midi_activity_time = time.time()
-    motors_enabled = True
-    """Send stop signal to Arduino over serial."""
-    if motor_index > motor_channels - 1:
-        return
-    if channel_outputting[motor_index]:
-        data = f'e,{motor_index}\n'.encode()
-        try:
-            ser.write(data)
-        except:
-            print("Serial Write Failure. Was the device unplugged?")
-            quit()
-        channel_outputting[motor_index] = False
 
 
 def disable_motors():
@@ -145,17 +136,23 @@ print("Listening for MIDI input...")
 
 try:
     while True:
+        msg_buffer = []
         for msg in inport.iter_pending():
             motor_index = msg.channel
             if motor_index > motor_channels - 1:
                 continue
             if msg.type == 'note_on':
                 frequency = note_to_frequency(msg.note)
-                print(f'Note ON: {msg.note} -> Frequency: {frequency} Hz')
-                send_frequency_to_arduino(motor_index, frequency)
+                msg_buffer.append(
+                    {'type': 'note_on', 'freq': frequency, 'channel': motor_index})
+                print(
+                    f'Motor {motor_index} ON - @{round(frequency, 2)} Hz')
             elif msg.type == 'note_off':
-                print(f'Note OFF: {msg.note} -> Stop signal sent')
-                stop_note(motor_index)
+                msg_buffer.append({'type': 'note_off', 'channel': motor_index})
+                print(
+                    f'Motor {motor_index} OFF')
+        if len(msg_buffer) > 0:
+            send_buffer_to_arduino(msg_buffer)
 
         # Check if it has been more than 5 seconds since the last MIDI activity
         if time.time() - last_midi_activity_time > 5:
