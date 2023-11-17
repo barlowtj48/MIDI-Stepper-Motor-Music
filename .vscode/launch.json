@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: MIDI Interface",
+      "name": "MIDI Interface",
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/midi_interface.py",
@@ -14,6 +14,14 @@
       "args": [
         "COM6" // Change this to the COM port of your Arduino device
       ]
+    },
+    {
+      "name": "Channel Splitter",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/Tools/channel_splitter.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
     }
   ]
 }
