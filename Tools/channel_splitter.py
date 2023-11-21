@@ -62,4 +62,4 @@ for file in os.listdir(os.path.join(current_path, "Tools", "input")):
         input_path = os.path.join(current_path, "Tools", "input", file)
         output_path = os.path.join(current_path, "Tools", "output", file)
         # Set your desired number of channels here (max 16)
-        split_notes_to_channels(input_path, output_path, max_channels=6)
+        split_notes_to_channels(input_path, output_path, max_channels=5)
