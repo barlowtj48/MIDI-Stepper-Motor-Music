@@ -1,12 +1,12 @@
-import inquirer
-
 try:
+    import inquirer
     import mido
     import serial
 except:
     print("Please install the required libraries using pip:")
     print("pip install mido")
     print("pip install pyserial")
+    print("pip install inquirer")
     # This seems to be some dependency of mido that is undocumented
     print("pip install python-rtmidi")
     quit()
@@ -82,6 +82,7 @@ print("Listening for MIDI input...")
 channel_outputting = [False] * motor_channels
 motors_enabled = True  # The motors are enabled by default
 
+
 def note_to_frequency(note):
     """Convert a MIDI note number to a frequency in Hertz."""
     freq = A4_FREQ * 2 ** ((note - A4_KEY) / 12)
@@ -152,6 +153,7 @@ def disable_motors():
         print("Serial Write Failure. Was the device unplugged?")
         quit()
 
+
 try:
     while True:
         msg_buffer = []
@@ -177,4 +179,3 @@ finally:
     inport.close()
     ser.close()
     print("Ports closed.")
-
