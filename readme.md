@@ -33,7 +33,7 @@ I have noted individual parts of the instructions that may be difficult to under
 
 - [Arduino IDE](https://www.arduino.cc/en/software)
 - MIDI Editor or DAW (I used FL Studio)
-- [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html)
+- [loopMIDI (Windows)](https://www.tobias-erichsen.de/software/loopmidi.html)
 - [Python](https://www.python.org/downloads/) (Version doesn't matter too much, I used 3.11.3) **Make sure you check the box "Add to Path"** <-- This will enable the command prompt to run python from wherever on your computer
 - This GitHub Repo
 
@@ -50,11 +50,17 @@ I have noted individual parts of the instructions that may be difficult to under
    <img src="tutorial_images/where_to_click_cmd.png" style="height:100px">
 6. This will open a command prompt in the downloaded folder. This is the correct location to run the python commands below.
 
-### LoopMIDI Setup
+### LoopMIDI Setup (Windows)
 
 1. Install loopMIDI from the link above.
 2. Open loopMIDI and click the + button to add a new port. Don't change the name, the python script is depending on it to contain the word "loopMIDI".
 3. That is all for that. This program must be running for the python script to work.
+
+### IAC Driver Setup (Mac)
+
+1. Goto Applications -> Utilities -> MIDI Studio
+2. Double click on "IAC Driver"
+3. Ensure "Device is online" is checked and that there is one port created
 
 ### Arduino Setup
 
@@ -101,6 +107,7 @@ After that: watch this video for setting up the CNC shield and stepper drivers: 
 2. Run the command `pip install -r requirements.txt` to install the required libraries.
 3. In the command prompt run the command `python midi_interface.py COM6` to run the script.
 4. Note that `COM6` will be specific to your computer, and you can see it in the Arduino IDE.
+5. You will prompted to choose your MIDI port (if you only have one then just press enter).
 
 ## Final Testing and Troubleshooting
 

@@ -1,10 +1,12 @@
 try:
+    import inquirer
     import mido
     import serial
 except:
     print("Please install the required libraries using pip:")
     print("pip install mido")
     print("pip install pyserial")
+    print("pip install inquirer")
     # This seems to be some dependency of mido that is undocumented
     print("pip install python-rtmidi")
     quit()
@@ -71,10 +73,23 @@ while motor_channels == 0 and time.time() - start_time < 5:
         print("Serial read failed. Please check your port and try again.")
         quit()
 
+questions = [
+    inquirer.List(
+        "port",
+        message="Choose MIDI port",
+        choices=mido.get_input_names(),
+    ),
+]
+
+answers = inquirer.prompt(questions)
+
+inport = mido.open_input(name=answers["port"])
+last_midi_activity_time = time.time()
+
+print("Listening for MIDI input...")
+
 # Keeps track of which channels are outputting
 channel_outputting = [False] * motor_channels
-
-last_midi_activity_time = time.time()
 motors_enabled = True  # The motors are enabled by default
 
 
@@ -152,22 +167,6 @@ def disable_motors():
         print("Serial Write Failure. Was the device unplugged?")
         quit()
 
-
-# Print out available MIDI ports
-# print(mido.get_input_names())
-
-# Find the port that has "loopMIDI" in its name
-foundPort = [name for name in mido.get_input_names() if 'loopMIDI' in name]
-if len(foundPort) == 0:
-    print("No loopMIDI port found. Please create one and try again.")
-    quit()
-else:  # Use the first port that has "loopMIDI" in its name
-    foundPort = foundPort[0]
-
-
-inport = mido.open_input(name=foundPort)
-
-print("Listening for MIDI input...")
 
 try:
     while True:
