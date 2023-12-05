@@ -30,6 +30,16 @@ else:
     print("For example:\npython midi_interface.py COM3")
     quit()
 
+# If the second command line argument is "pitch_bending", enable pitch bending
+# This enables the velocity of the note to change the frequency of the motor
+# This is helpful when accounting for a few notes that are out of tune
+# If the MIDI file is not out of tune, do not use this option
+pitch_bending = False
+if len(sys.argv) > 2 and sys.argv[2] == "pitch_bending":
+    pitch_bending = True
+    print("Pitch bending enabled.")
+
+
 # The baud rate is the speed of the serial connection
 # It must match the baud rate in the Arduino code
 baud_rate = 115200
@@ -69,8 +79,12 @@ motors_enabled = True  # The motors are enabled by default
 
 
 def note_to_frequency(note):
+    global pitch_bending
     """Convert a MIDI note number to a frequency in Hertz."""
     freq = A4_FREQ * 2 ** ((note - A4_KEY) / 12)
+    if pitch_bending:
+        # This will add 5 cent of pitch bending for every 1 velocity
+        freq += freq * ((msg.velocity / 12700) * 5)
     return freq
 
 
