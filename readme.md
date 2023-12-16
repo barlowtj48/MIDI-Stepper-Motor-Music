@@ -125,7 +125,20 @@ After that: watch this video for setting up the CNC shield and stepper drivers: 
 - The motors are limited by how fast they can accelerate, so if you do a very rapid arpeggio then the motor power limit may need to be turned up to allow this.
 - Placing the motors on a large flat surface will help them to be louder. The more surface area the sound has to resonate, the louder it will be. That's why I used a large USPS shipping box in the TikTok videos.
 - If you do not have software to test the MIDI output but you have everything else working, then [Try out this site](https://signal.vercel.app/edit) Shoutout to Jonny for finding this!
-  - Click on the settings and click on MIDI and check the box for the loopMIDI output and you will be outputting on port 1, channel 1. 
+  - Click on the settings and click on MIDI and check the box for the loopMIDI output and you will be outputting on port 1, channel 1.
+
+## How do I use it?
+
+I use FL Studio 20 when I am making music. I usually google around to see if I can find a copy of a given song as a MIDI, because that's the bulk of the work. I have my FL Studio MIDI settings as follows:
+
+<img src="tutorial_images/midi_settings.png" style="height: 400px">
+
+If I import a MIDI then I have to create a new track for the MIDI Output, and make sure it looks like this:
+
+<img src="tutorial_images/midi_output_config.png" style="height: 600px">
+
+From there you can copy notes into the piano roll, and you're off to making some good noises!
+P.S. I don't usually bother with the "track" view, most of the time I just use the piano roll. This is how all of the MIDI imports come anyway so that's easiest. If you want to make your own tracks or make your own full compositions, I would recommend using the track view. It's easier to see what's going on across a whole song.
 
 ## Conclusion
 
