@@ -43,12 +43,12 @@ I have noted individual parts of the instructions that may be difficult to under
 
 1. Click the Green "Code" button at the top right, and click `Download Zip` or [Click Here](https://github.com/barlowtj48/MIDI-Stepper-Motor-Music/archive/refs/heads/main.zip)
 2. Extract the downloaded folder to it's own folder
-     On Windows this means Right Click -> Extract All -> Check the box -> Extract
+   On Windows this means Right Click -> Extract All -> Check the box -> Extract
 3. Open the folder `MIDI-Stepper-Motor-Music-main` so that you are able to see the files like this:
    <img src="tutorial_images/file_view.png" style="height: 300px">
 4. Click at the top of the window (like the picture below) and type in `cmd`
    <img src="tutorial_images/where_to_click_cmd.png" style="height:100px">
-6. This will open a command prompt in the downloaded folder. This is the correct location to run the python commands below.
+5. This will open a command prompt in the downloaded folder. This is the correct location to run the python commands below.
 
 ### LoopMIDI Setup (Windows)
 
@@ -129,6 +129,8 @@ After that: watch this video for setting up the CNC shield and stepper drivers: 
 
 ## How do I use it?
 
+First things first, I open up loopMIDI on my PC. This needs to run before the python script so that it is available to select as a MIDI output. From there I open up the python script and use the following command inside of the root directory (where the python script is located): `python midi_interface.py COM6`. After a few seconds, it will prompt you to select a MIDI output. Use the arrow keys and enter to select, but if you only have one MIDI output then just press enter. The script will run and the motors will probably go into sleep mode after 5 seconds. This is normal, and nothing needs to be done to wake them up- just start sending notes.
+
 I use FL Studio 20 when I am making music. I usually google around to see if I can find a copy of a given song as a MIDI, because that's the bulk of the work. I have my FL Studio MIDI settings as follows:
 
 <img src="tutorial_images/midi_settings.png" style="height: 400px">
@@ -153,3 +155,5 @@ Direct any questions that you have to the issues tab on this repository. I will 
 ## Advanced Extras
 
 If you have a good understanding of electronics and you have a breadboard and all of the components, then it really is just a limit of how much you want to spend on the motors and drivers. I believe that you can just hold the direction pins on the stepper drivers in either direction (because the direction doesn't matter) and effectively use 1 pin per output if wiring manually. This would enable the Arduino Uno (or whatever microcontroller) to use pretty much as many motors as it has pins. I have not tested this but I believe it would work. If you try this, please let me know how it goes. The efforts in making the MIDI music would be considerably higher though, because 15 motors would require 15 separate channels to be aligned and that would take a while.
+
+Additionally, there is a way to fine-tune each note while the motors are playing. This is helpful when all motors are playing at once and you want to adjust one of them to be better in tune. The only per-note information that is also carried over MIDI is velocity, so that is what I use as an adjustment. The adjustment only goes up though. If you want to adjust down, you can choose a lower note in your DAW and pitch shift it up higher. Make sure if you are doing this that all velocities are set to 0 otherwise they will sound very badly and out of tune. I use it on songs with very high notes to help the motors achieve the correct pitch. The command to use to enable this running mode is: `python midi_interface.py COM6 pitch_bending`.
