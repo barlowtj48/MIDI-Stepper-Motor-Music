@@ -73,6 +73,10 @@ while motor_channels == 0 and time.time() - start_time < 5:
         print("Serial read failed. Please check your port and try again.")
         quit()
 
+if motor_channels == 0:
+    print("Failed to connect to Arduino. Please check your port and try again.\nAlso make sure that the Arduino is running the correct code found in the 'midi_interface' folder.")
+    quit()
+
 questions = [
     inquirer.List(
         "port",
