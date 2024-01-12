@@ -96,7 +96,7 @@ After that: watch this video for setting up the CNC shield and stepper drivers: 
 
 ### Arduino Programming
 
-1. Open the sketch in the Arduino IDE.
+1. Open the sketch in the Arduino IDE. If you have 4 motors, open the `midi_interface_4_motors.ino` file. A 5th motor is considered advanced setup, it is covered in the advanced extras section.
 2. It requires the AccelStepper library. You can install this from the Arduino IDE by going to Sketch > Include Library > Manage Libraries. Search for AccelStepper and install the library by Mike McCauley.
 3. Ensure that the correct board and port are selected in the Tools menu.
 4. Upload the sketch to the Arduino.
@@ -157,3 +157,11 @@ Direct any questions that you have to the issues tab on this repository. I will 
 If you have a good understanding of electronics and you have a breadboard and all of the components, then it really is just a limit of how much you want to spend on the motors and drivers. I believe that you can just hold the direction pins on the stepper drivers in either direction (because the direction doesn't matter) and effectively use 1 pin per output if wiring manually. This would enable the Arduino Uno (or whatever microcontroller) to use pretty much as many motors as it has pins. I have not tested this but I believe it would work. If you try this, please let me know how it goes. The efforts in making the MIDI music would be considerably higher though, because 15 motors would require 15 separate channels to be aligned and that would take a while.
 
 Additionally, there is a way to fine-tune each note while the motors are playing. This is helpful when all motors are playing at once and you want to adjust one of them to be better in tune. The only per-note information that is also carried over MIDI is velocity, so that is what I use as an adjustment. The adjustment only goes up though. If you want to adjust down, you can choose a lower note in your DAW and pitch shift it up higher. Make sure if you are doing this that all velocities are set to 0 otherwise they will sound very badly and out of tune. I use it on songs with very high notes to help the motors achieve the correct pitch. The command to use to enable this running mode is: `python midi_interface.py COM6 pitch_bending`.
+
+## How did you add the fifth motor?
+
+Because the Arduino CNC Shield is really just a way to plug the drivers in, you can use jumpers to plug in as many drivers as your GPIO can provide. With more pins, you can add more motors. I used the X and Y endstop pins to plug in the step and direction pins that connect to the 5th motor driver. I also made sure to add the extra connection to the input 12V power supply. The motor can be plugged into the driver directly. Don't forget to plug the EN pin in! Without it, the motor will not turn on. For the arduino to register the 5th motor, it needs to know what pins to output to. I have added another `.ino` file that includes the changes needed for the 5th motor. Make sure to flash that to the Arduino before running the python script. There are no changes needed for the python script to work, as long as the correct `ino` file is flashed, the python script will recognize the 5th motor.
+
+Here are some photos of how I have my #5 motor wired up: (I would highly recommend using a breadboard for this. Doing it the way I did is very messy and hard to troubleshoot) (also it looks terrible)
+
+![Motor 5 Configuration](tutorial_images/motor_5_configuration.png)
