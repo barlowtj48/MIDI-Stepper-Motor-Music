@@ -92,6 +92,7 @@ If the motors are wired **correctly**, the first 2 (or last two) pins will make 
 
 After that: watch this video for setting up the CNC shield and stepper drivers: [Link to video](https://youtu.be/rgAe1eVj9fw)
 
+### Getting the 4th motor working
 **The "A" driver is not enabled by default. It can be enabled using a jumper between the two pins noted in the photo below. This is required for the A driver to work.**
 
 ![A Driver Enable](tutorial_images/a_stepper_enable.png)
